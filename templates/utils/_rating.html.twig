@@ -1,0 +1,9 @@
+{# Affichage rating en dynamique #}
+
+<div class="d-flex" style="color: orange;">
+    {% for i in range(0, 4) %}
+        {% set starClass = rating - i >= 1 ? '-fill' : (rating - i >= 0.5 ? '-half' : '') %}
+        <span class="bi bi-star{{ starClass }}"></span>
+    {% endfor %}
+    <span class="ps-1">{{ rating }}</span>
+</div>

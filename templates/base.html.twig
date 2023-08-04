@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    {% block css_base %}
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
+            integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+        <!-- Bootstrap icons -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+        <!-- Our custom CSS -->
+        <link rel="stylesheet" href="{{ asset("css/oflix.css") }}">
+    {% endblock %}
+
+    {% block css_user %}{% endblock %}
+    {% block javascript_user %}{% endblock %}
+    
+    <!-- favicon -->
+    <link rel="shortcut icon" href="{{ asset("favicon.png") }}" type="image/x-icon">
+
+    <title>{% block title %}Titre par défaut{% endblock %}</title>
+
+</head>
+
+<body>
+
+    <!-- Nav -->
+    {% if app.session.get('theme') == 'allocine' %}
+        <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #fecc00;">
+    {% else %}
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    {% endif %}
+        <div class="container-fluid">
+            <a href="{{ path("main_home") }}" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none header-logo">
+                <img src="{{ asset("favicon.png") }}" height="24" alt="Logo O'flix">
+                <span class="header-logo__title">O'flix</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link {% block nav_active_home %}{% endblock %}" href="{{ path('main_home') }}">Accueil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% block nav_active_movies %}{% endblock %}" href="{{ path('main_movies_list') }}"><i class="bi bi-film"></i> Films, séries TV</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% block nav_active_favorites %}{% endblock %}" href="{{ path('favorites_list') }}"><i class="bi bi-bookmark"></i> Ma liste</a>
+                    </li>
+                </ul>
+                {# 
+                    On teste via 'is_granted' si l'utilisateur est connecté 
+                    Si c'est le cas on affiche le menu utilisateur
+                    Sinon, on affiche seulement le lien de connexion
+                #}
+                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item dropdown">
+
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                                data-bs-toggle="dropdown">
+                                <span>{{ app.user.email }}</span>
+                                <i class="bi bi-person-square"></i>
+                            </a>
+
+                            <ul class="dropdown-menu">
+
+                                {# Affiche le role de l'utilisateur connecté #}
+
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    <li class="mb-1"><span class="ms-3 text-muted">Administrateur</span></li>
+                                {% elseif is_granted('ROLE_MANAGER') %}
+                                    <li class="mb-1"><span class="ms-3 text-muted">Manager</span></li>
+                                {% elseif is_granted('ROLE_USER') %}
+                                    <li class="mb-1"><span class="ms-3 text-muted">Utilisateur</span></li>
+                                {% endif %}
+
+                                {#
+                                    Si l'utilisateur est au moins 'Manager' Alors on affiche le
+                                    lien vers le backoffice
+                                #}
+
+                                {% if is_granted('ROLE_MANAGER') %}
+                                    <li><a class="dropdown-item" href="{{ path('app_back_dashboard') }}">Backoffice</a></li>
+                                {% endif %}
+
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+
+                                {# On affiche le lien vers logout #}
+
+                                <li><a class="dropdown-item" href="{{ path('login_logout') }}">Déconnexion</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                {% else %}
+                    <a href="{{ path('login_index') }}" class="btn btn-danger me-2">Connexion</a>
+                    <a href="{{ path('app_register') }}" class="btn btn-warning me-2">Enregistrement</a>
+                {% endif %}
+
+                <form class="d-flex" action="#">
+                    <input class="form-control form-control-sm me-2" name="search" type="search" placeholder="Rechercher...">
+                    <button class="btn btn-outline-danger" type="submit"><i class="bi bi-search"></i></button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    {% block subnav %}{% endblock %}
+
+    {% block before_body %}{% endblock %}
+    
+    {{ include('utils/_flash.html.twig') }}
+
+    {% block body %}{% endblock %}
+    {% block after_body %}{% endblock %}
+
+    {% if randomMovie is defined %}
+        <div class="text-center border-top mt-3">
+            <p data-test="test-random">Un film à voir : <a href="{{ path('main_movie_show', {slug: randomMovie.slug }) }}">{{ randomMovie.title }}</a> </p>
+        </div>
+    {% endif %}
+
+    <!-- footer -->
+    <footer class="container-fluid py-4 border-top text-center">
+        <span class="text-muted">O'flix made with &hearts; at O'clock !
+             <a href="{{ path('main_theme_switcher') }}" class="link-secondary text-decoration-none">
+                {# Attention avec la session, bien vérifier ce qui se passe la première fois qu'on arrive sur le site #}
+                {% if app.session.get('theme', 'netflix') == 'netflix' %}
+                Allociné <i class="bi bi-toggle-on mx-1"></i> Netflix
+                {% else %}
+                Allociné <i class="bi bi-toggle-off mx-1"></i> Netflix
+                {% endif %}
+            </a></small>
+        </span>
+    </footer>
+
+    <!-- Optional JavaScript; choose one of 
+        the two! -->
+
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
+        crossorigin="anonymous"></script>
+
+    <!-- Option 2: Separate Popper and Bootstrap JS -->
+    <!--
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js" integrity="sha384-W8fXfP3gkOKtndU4JGtKDvXbO53Wy8SZCQHczT5FMiiqmQfUpWbYdTil/SxwZgAN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.min.js" integrity="sha384-skAcpIdS7UcVUC05LJ9Dxay8AXcDYfBJqt1CJ85S/CFujBsIzCIv+l9liuYLaMQ/" crossorigin="anonymous"></script>
+    -->
+</body>
+
+</html>

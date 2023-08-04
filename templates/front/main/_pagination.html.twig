@@ -1,0 +1,35 @@
+{% if pagination.nbPages > 1 %}
+    <nav class="col-lg-9 offset-lg-3">
+        <ul class="pagination">
+
+            {# Fonction recherche #}
+
+            {% set recherche = pagination.search | length > 0 ? "?search=" ~ pagination.search : "" %}
+            {# Pagination a afficher seulement si on a plus d'une page #}
+
+            {# Affichage de 'page précédente #}            
+            <li class="page-item">
+                <a class="page-link"
+                   href="{{ path('main_movies_list', {page: max(1,pagination.currentPage-1)}) }}{{ recherche }}">&laquo;</a>
+            </li>
+
+            {# Affichage des pages allant de 0 a nbPages-1 #}            
+            {% for i in 1..pagination.nbPages %}
+
+                {# Test si la page en cours est celle qu'on est en train de générer #}
+                {# si Oui, il faut ajouter la classe 'active' au <li> #}
+                {% set active = pagination.currentPage == i ? " active" : "" %}
+
+                {# Affichage du bouton et calcul de la route #}
+                <li class="page-item{{ active }}">
+                    <a class="page-link" href="{{ path('main_movies_list', {page: i}) }}{{ recherche }}">{{ i }}</a>
+                </li>
+            {% endfor %}
+
+            {# Affichage de 'page suivante' #}            
+            <li class="page-item">
+                <a class="page-link" href="{{ path('main_movies_list', {page: min(pagination.nbPages,pagination.currentPage+1)}) }}{{ recherche }}">&raquo;</a>
+            </li>
+        </ul>
+    </nav>
+{% endif %}

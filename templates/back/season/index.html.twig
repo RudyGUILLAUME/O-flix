@@ -1,0 +1,40 @@
+{% extends 'back/base_back.html.twig' %}
+
+{% block title %}Season index{% endblock %}
+
+{% block body %}
+    <h1>Liste des saisons</h1>
+    <h2>{{ movie.title }}</h2>
+
+    <p><a href="{{ path('app_back_season_new', {'id': movie.id}) }}">Ajouter une saison</a></p>
+    
+    <p><a href="{{ path('app_back_movie_index') }}">Retour à la liste de films</a></p>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>SeasonNumber</th>
+                <th>EpisodesNumber</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for season in seasons %}
+            <tr>
+                <td>{{ season.id }}</td>
+                <td>{{ season.seasonNumber }}</td>
+                <td>{{ season.episodesNumber }}</td>
+                <td>
+                    <a href="{{ path('app_back_season_edit', {'id': season.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

@@ -1,0 +1,31 @@
+{# on hérite du template de base #}
+{% extends "base.html.twig" %}
+
+{# on injecte la sous-nav du back-office dans le parent #}
+{% block subnav %}
+
+<ul class="nav container">
+    <li class="nav-item">
+        <a class="nav-link" href="{{ path('app_back_movie_index') }}">Films et séries</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ path('app_back_genre_index') }}">Genres</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ path('app_back_review_index') }}">Critiques</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ path('app_back_user_index') }}">Utilisateurs</a>
+    </li>
+</ul>
+
+{% endblock %}
+
+{# pour mettre un conteneur CSS sur les pages du back #}
+{% block before_body %}
+<div class="container">
+{% endblock %}
+
+{% block after_body %}
+</div>
+{% endblock %}

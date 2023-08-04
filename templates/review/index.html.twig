@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Review index{% endblock %}
+
+{% block body %}
+    <h1>Review index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Content</th>
+                <th>Rating</th>
+                <th>Reactions</th>
+                <th>WatchedAt</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for review in reviews %}
+            <tr>
+                <td>{{ review.id }}</td>
+                <td>{{ review.username }}</td>
+                <td>{{ review.email }}</td>
+                <td>{{ review.content }}</td>
+                <td>{{ review.rating }}</td>
+                <td>{{ review.reactions ? review.reactions|json_encode : '' }}</td>
+                <td>{{ review.watchedAt ? review.watchedAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>
+                    <a href="{{ path('app_review_show', {'id': review.id}) }}">show</a>
+                    <a href="{{ path('app_review_edit', {'id': review.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="8">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_review_new') }}">Create new</a>
+{% endblock %}

@@ -1,0 +1,9 @@
+{# https://symfony.com/doc/5.4/controller/error_pages.html#overriding-the-default-error-templates #}
+
+{% extends "base.html.twig" %}
+
+{% block title %}{{ exception.message }}{% endblock %}
+
+{% block body %}
+    <h1>{{ exception.message }} (erreur {{ status_code }})</h1>
+{% endblock %}

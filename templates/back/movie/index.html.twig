@@ -1,0 +1,53 @@
+{% extends 'back/base_back.html.twig' %}
+
+{% block title %}Movie index{% endblock %}
+
+{% block body %}
+    <h1>Movie index</h1>
+
+    {{ include('utils/_flash.html.twig') }}
+
+    <p><a href="{{ path('app_back_movie_new') }}">Ajouter un film/une série</a></p>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>RealeaseDate</th>
+                <th>Duration</th>
+                <th>Poster</th>
+                <th>Rating</th>
+                <th>Type</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody class="back-list">
+        {% for movie in movies %}
+            <tr>
+                <td>{{ movie.id }}</td>
+                <td>{{ movie.title }}</td>
+                <td>{{ movie.realeaseDate ? movie.realeaseDate|date('Y') : '' }}</td>
+                <td>{{ movie.duration }} min</td>
+                <td><img src="{{ movie.poster }}" class="back-list__poster"></td>
+                <td>{{ movie.rating }}</td>
+                <td>{{ movie.type }}</td>
+                <td>
+                    <a href="{{ path('app_back_movie_show', {'id': movie.id}) }}">show</a>
+                    <a href="{{ path('app_back_movie_edit', {'id': movie.id}) }}">edit</a>
+                    {# série ? #}
+                    {# ce lien va nous amener vers la liste des saisons de cette série #}
+                    {% if movie.type == 'Série' %}
+                    <a href="{{ path('app_back_season_index', {'id': movie.id}) }}">saisons</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="10">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
